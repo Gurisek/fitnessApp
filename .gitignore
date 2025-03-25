@@ -25,7 +25,7 @@ yarn-debug.log*
 yarn-error.log*
 
 # MongoDB data
-/mongo-data/
+/mongo-data/*
 
 # Docker files
 docker-compose.override.yml
