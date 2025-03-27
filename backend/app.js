@@ -7,7 +7,7 @@ connectDB();
 
 // vytvorime jednoduchy endpoint, ktery bude vracet JSON s treninkovymi daty
 app.get("/api", (req, res) => {
-  res.json({ training: ["trainingOne", "trainingTwo", "trainingThree"] });
+  res.json({ training: ["buzno", "trainingTwo", "trainingThree"] });
 });
 
 // pozor port 5000 je default, ale musel jsem zmenit na 5001, protoze 5000 uz byl pouzity
