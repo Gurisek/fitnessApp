@@ -1,21 +1,32 @@
 import React, { useState, useEffect } from "react";
+import "./tailwind.css";
+import WorkoutList from "./Components/WorkoutList";
+import Loading from "./Components/Loading";
 
 export default function App() {
-  const [backednData, setBackendData] = useState([{}]);
+  // Oprava názvu stavu a výchozí hodnoty
+  const [backendData, setBackendData] = useState([]);
 
   useEffect(() => {
     fetch("/api")
       .then((response) => response.json())
       .then((data) => {
-        setBackendData(data);
+        setBackendData(data); // Uložení dat do stavu
+      })
+      .catch((error) => {
+        console.error("Chyba při načítání dat:", error);
       });
   }, []);
 
-  const training = backednData.training
-    ? backednData.training.map((training, index) => <div key={index}>{training}</div>)
-    : [];
-  return <div>
-    <h1>Training</h1>
-    {training}
-  </div>;
+  return (
+    <div>
+      <h1>Seznam tréninků</h1>
+      {/* Kontrola, zda jsou data načtena */}
+      {backendData.length > 0 ? (
+        <WorkoutList workoutData={backendData} />
+      ) : (
+        <Loading />
+      )}
+    </div>
+  );
 }
