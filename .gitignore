@@ -32,5 +32,6 @@ docker-compose.override.yml
 # Backend environment files
 /backend/.env
 
+/docker
 # Editor settings
 .vscode/

@@ -1,9 +1,12 @@
 services:
   mongo:
     image: mongo:latest
-    container_name: fitnessapp-mongo
     ports:
       - "27017:27017"
     volumes:
       - ./mongo-data:/data/db
       - ./mongo-init:/docker-entrypoint-initdb.d
+
+volumes:
+  mongo-data:
+  mongo-init:

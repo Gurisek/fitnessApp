@@ -12,7 +12,7 @@ app.use(express.json());
 
 // Routes
 app.use("/workout", workoutRoutes);
-app.use("/exercise", exerciseRoutes)
+app.use("/exercise", exerciseRoutes);
 
 // server start -> nejdrive pripojit db a pak zapnout server
 const startServer = async () => {

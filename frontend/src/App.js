@@ -8,10 +8,10 @@ export default function App() {
   const [backendData, setBackendData] = useState([]);
 
   useEffect(() => {
-    fetch("/api")
+    fetch("/workouts/")
       .then((response) => response.json())
-      .then((data) => {
-        setBackendData(data); // Uložení dat do stavu
+      .then((workouts) => {
+        setBackendData(workouts);
       })
       .catch((error) => {
         console.error("Chyba při načítání dat:", error);
@@ -20,7 +20,7 @@ export default function App() {
 
   return (
     <div>
-      <h1>Seznam tréninků</h1>
+      <h1>Sezn tréninků</h1>
       {/* Kontrola, zda jsou data načtena */}
       {backendData.length > 0 ? (
         <WorkoutList workoutData={backendData} />
