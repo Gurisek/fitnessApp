@@ -5,8 +5,7 @@ const WorkoutSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      required: true,
-      message: "Please enter workout name",
+      required: [true, "Name is required"]
     },
     description: {
       type: String,

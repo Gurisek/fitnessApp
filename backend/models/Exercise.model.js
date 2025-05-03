@@ -7,7 +7,7 @@ const ExerciseSchema = new mongoose.Schema({
   },
   description: {
     type: String,
-    required: [false, "Please enter exercise description"],
+    required: [true, "Please enter exercise description"],
   },
 });
 
