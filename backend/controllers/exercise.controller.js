@@ -11,10 +11,10 @@ import { updateWorkoutExercises } from "../dao/workout.dao.js"; // Import functi
 export const createExerciseController = async (req, res) => {
   const { name, description } = req.body;
 
-  if (!name) {
+  if (!name || !description) {
     return res
       .status(400)
-      .json({ message: "Name, description and type are required." });
+      .json({ message: "Name and description are required." });
   }
 
   try {
