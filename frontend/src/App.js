@@ -1,32 +1,24 @@
-import React, { useState, useEffect } from "react";
 import "./tailwind.css";
-import WorkoutList from "./Components/WorkoutList";
-import Loading from "./Components/Loading";
+import Home from "./Pages/home";
+import Exercises from "./Pages/exercises";
+import Navbar from "./Components/Navbar";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 export default function App() {
   // Oprava názvu stavu a výchozí hodnoty
-  const [backendData, setBackendData] = useState([]);
-
-  useEffect(() => {
-    fetch("/workouts/")
-      .then((response) => response.json())
-      .then((workouts) => {
-        setBackendData(workouts);
-      })
-      .catch((error) => {
-        console.error("Chyba při načítání dat:", error);
-      });
-  }, []);
 
   return (
-    <div>
-      <h1>Sezn tréninků</h1>
-      {/* Kontrola, zda jsou data načtena */}
-      {backendData.length > 0 ? (
-        <WorkoutList workoutData={backendData} />
-      ) : (
-        <Loading />
-      )}
-    </div>
+    <Router>
+      <div className="App">
+        <Navbar />
+        <div className="content">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/exercises" element={<Exercises />} />
+          </Routes>
+        </div>
+        {/* <Footer /> */}
+      </div>
+    </Router>
   );
 }

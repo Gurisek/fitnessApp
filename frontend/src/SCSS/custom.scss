@@ -1,0 +1,42 @@
+// $dark: #212937;
+
+@import "~bootstrap/scss/bootstrap";
+
+$custom-colors: (
+  "pozadi": #23223b,
+  "primarni": #4e46dd,
+  "sekundarnisvetla": #899edb,
+  "sekundarnitma": #212937,
+);
+
+$theme-colors: map-merge($theme-colors, $custom-colors);
+
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+@import "~bootstrap/scss/mixins";
+@import "~bootstrap/scss/utilities";
+
+.icon-custom {
+  color: map-get($custom-colors, "primarni");
+  margin-right: 0.5rem;
+}
+
+.button-custom-bg {
+  background-color: map-get($custom-colors, "primarni");
+  color: #fbf9f8;
+  border: 0;
+}
+
+.card-custom-bg {
+  background-color: map-get($custom-colors, "sekundarnitma");
+  color: #fbf9f8;
+//   border: 2px solid map-get($custom-colors, "sekundarnisvetla");
+  border-radius: 1.2rem;
+  border-width: 3px;
+  box-shadow: 0 0 0.5rem map-get($custom-colors, "sekundarnisvetla");
+}
+
+body {
+  background-color: map-get($custom-colors, "pozadi");
+  color: #fbf9f8; 
+}
