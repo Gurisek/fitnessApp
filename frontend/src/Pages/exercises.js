@@ -1,9 +1,8 @@
 import Loading from "../Components/Loading";
 import ExerciseList from "../Components/ExerciseList";
-import useFetch from './../Hooks/useFetch';
+import useFetch from "./../Hooks/useFetch";
 
 export default function Exercises() {
-
   const {
     data: exerciseData,
     error,
@@ -12,7 +11,11 @@ export default function Exercises() {
 
   return (
     <>
-      {loading && <Loading className="text-center" />}
+      {loading && (
+        <div className="d-flex align-items-center justify-content-center mt-5">
+          <Loading />
+        </div>
+      )}
       {error && <p className="text-red-500">{`Chyba: ${error}`}</p>}
       {exerciseData && <ExerciseList exercises={exerciseData} />}
     </>

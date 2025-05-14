@@ -6,7 +6,6 @@ export default function NavbarComponent() {
   return (
     <Navbar bg="dark" expand="lg" variant="dark">
       <Container>
-        {/* Left side: Navbar text */}
         <Navbar.Brand
           className="d-flex align-items-center"
           as={Link}
@@ -18,7 +17,6 @@ export default function NavbarComponent() {
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
-          {/* Right side: Home and Exercises links */}
           <Nav className="ms-auto">
             <Nav.Link
               as={Link}
@@ -37,19 +35,15 @@ export default function NavbarComponent() {
             <Button
               variant="primary"
               className="button-custom-bg d-flex align-items-center p-2 me-2 m-1"
-              onClick={() => {
-                console.log("Add training button clicked");
-              }}
             >
               <PlusIcon size={18} />
               Přidat trénink
             </Button>
             <Button
+              as={Link}
+              to="/create/exercise"
               variant="primary"
-              className="button-custom-bg d-flex align-items-center p-2 m-1"
-              onClick={() => {
-                console.log("Add training button clicked");
-              }}
+              className="button-custom-bg d-flex align-items-center p-2 me-2 m-1"
             >
               <PlusIcon size={18} />
               Přidat cvik
