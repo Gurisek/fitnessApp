@@ -33,6 +33,8 @@ export default function NavbarComponent() {
               Exercises
             </Nav.Link>
             <Button
+              as={Link}
+              to="/create/workout"
               variant="primary"
               className="button-custom-bg d-flex align-items-center p-2 me-2 m-1"
             >
