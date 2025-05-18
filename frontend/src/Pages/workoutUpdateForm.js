@@ -1,36 +1,51 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Form, Button, Col, Row } from "react-bootstrap";
+import { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { Form, Button, Col, Row, Alert, Table } from "react-bootstrap";
 import useFetch from "../Hooks/useFetch.js";
-import { Alert } from "react-bootstrap";
-import Table from "react-bootstrap/Table";
 import { Trash } from "react-bootstrap-icons";
 
-function WorkoutForm() {
-  // State variables
+function WorkoutUpdateForm() {
+  const { id } = useParams(); // předpokládá se route /workout/update/:id
+  const navigate = useNavigate();
+
+  // Načtení existujícího tréninku
+  const { data: workout, error: workoutError } = useFetch(
+    `http://localhost:5001/workout/${id}`
+  );
+  const { data: exercises, error: exercisesError } = useFetch(
+    "http://localhost:5001/exercise/"
+  );
+
+  // State
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [workoutExercises, setWorkoutExercises] = useState([]);
   const [selectedExercise, setSelectedExercise] = useState("");
   const [sets, setSets] = useState("");
   const [reps, setReps] = useState("");
   const [weight, setWeight] = useState("");
-  const [minutes, setMinutes] = useState("00");
-  const [seconds, setSeconds] = useState("00");
-  const [workoutExercises, setWorkoutExercises] = useState([]);
+  const [minutes, setMinutes] = useState("");
+  const [seconds, setSeconds] = useState("");
+  const [showTimer, setShowTimer] = useState(false);
   const [validated, setValidated] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [errorMsgTable, setErrorMsgTable] = useState("");
-  const [showTimer, setShowTimer] = useState(false);
 
-  // useNavigate pro presmerovani po odeslani formulare
-  const navigate = useNavigate();
+  // Předvyplnění dat po načtení
+  useEffect(() => {
+    if (workout) {
+      setName(workout.name || "");
+      setDescription(workout.description || "");
+      setWorkoutExercises(
+        (workout.exercises || []).map((ex) => ({
+          ...ex,
+          name: exercises?.find((e) => e._id === ex.exercise)?.name || "",
+        }))
+      );
+    }
+  }, [workout, exercises]);
 
-  // useFetch pro ziskani cviku
-  const { data: exercises, error } = useFetch(
-    "http://localhost:5001/exercise/"
-  );
-
-  // Funkce pro pridani cviku do treninkoveho planu
+  // Přidání cviku
   const handleAddExercise = () => {
     const isRepsOrWeightFilled = reps !== "" && weight !== "";
     const isTimeFilled = Number(minutes) > 0 || Number(seconds) > 0;
@@ -41,10 +56,9 @@ function WorkoutForm() {
       reps: Number(reps),
       weight: Number(weight),
       duration: `${minutes.padStart(2, "0")}:${seconds.padStart(2, "0")}`,
-      name: exercises.find((ex) => ex._id === selectedExercise)?.name,
+      name: exercises?.find((ex) => ex._id === selectedExercise)?.name,
     };
 
-    // Validace
     if (!selectedExercise) {
       setErrorMsg("Musíte vybrat cvik.");
       return;
@@ -57,38 +71,27 @@ function WorkoutForm() {
       setErrorMsg("Musíte zadat čas.");
       return;
     }
-
     if (!isTimeFilled && !isRepsOrWeightFilled) {
       setErrorMsg("Musíte zadat čas, nebo počet opakování/váhu.");
       return;
     }
 
-    // ukladani cviku do treninkoveho planu
     setWorkoutExercises([...workoutExercises, newExercise]);
-    // Resetování polí
     setSelectedExercise("");
     setSets("");
     setReps("");
     setWeight("");
-    setMinutes("00");
-    setSeconds("00");
+    setMinutes("");
+    setSeconds("");
   };
 
-  // submit funkce
+  // Odeslání změn
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const form = e.currentTarget;
-    if (form.checkValidity() === false) {
-      e.stopPropagation();
-      setValidated(true);
-      return;
-    }
-
     if (workoutExercises.length === 0) {
       setErrorMsgTable("Musíte přidat alespoň jeden cvik.");
       return;
     }
-
     const workoutData = {
       name,
       description,
@@ -102,36 +105,23 @@ function WorkoutForm() {
         })
       ),
     };
-
     setValidated(true);
 
-    const response = await fetch("http://localhost:5001/workout/create", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+    const response = await fetch(`http://localhost:5001/workout/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(workoutData),
     });
 
-    // pokud je odpoved uspesna, presmeruj na domovskou stranku
     if (response.ok) {
-      alert("Trénink byl úspěšně uložen.");
-      setName("");
-      setDescription("");
-      setWorkoutExercises([]);
-      setSelectedExercise("");
-      setSets("");
-      setReps("");
-      setWeight("");
-      setMinutes("00");
-      setSeconds("00");
+      alert("Trénink byl úspěšně aktualizován.");
       navigate("/");
     }
   };
 
   return (
     <div className="container mt-5 p-4 card-custom-bg">
-      <h1 className="text-center text-2xl font-bold mb-4">Vytvořit trénink</h1>
+      <h2>Upravit trénink</h2>
       <Form onSubmit={handleSubmit} noValidate validated={validated}>
         <Form.Group controlId="formWorkoutName">
           <Form.Label>Název tréninku</Form.Label>
@@ -158,14 +148,13 @@ function WorkoutForm() {
         </Form.Group>
 
         <h4>Cviky</h4>
-        {/* Validace pro cviky aby byl aspon jeden vybrany a aby byl vyplneny */}
-        {error && <p className="text-danger">{error.message}</p>}
+        {workoutError && <p className="text-danger">{workoutError.message}</p>}
+        {exercisesError && <p className="text-danger">{exercisesError.message}</p>}
         {errorMsgTable && (
-          <Alert variant="danger" onClose={() => setErrorMsg("")} dismissible>
+          <Alert variant="danger" onClose={() => setErrorMsgTable("")} dismissible>
             {errorMsgTable}
           </Alert>
         )}
-        {/* Vypsani cviku do tabulky */}
         <Table variant="dark" striped bordered hover responsive>
           <thead>
             <tr>
@@ -178,9 +167,9 @@ function WorkoutForm() {
               <th>Akce</th>
             </tr>
           </thead>
-          {workoutExercises.map((exercise, index) => (
-            <tbody key={index}>
-              <tr>
+          <tbody>
+            {workoutExercises.map((exercise, index) => (
+              <tr key={index}>
                 <td>{index + 1}</td>
                 <td>{exercise.name}</td>
                 <td>{exercise.sets}</td>
@@ -203,10 +192,9 @@ function WorkoutForm() {
                   </Button>
                 </td>
               </tr>
-            </tbody>
-          ))}
+            ))}
+          </tbody>
         </Table>
-        {/* Formular pro pridani cviku */}
         <Row className="mb-3 align-items-center">
           <Col xs={12} md={6} lg={3}>
             <Form.Group controlId="formExerciseSelect">
@@ -309,16 +297,14 @@ function WorkoutForm() {
           type="switch"
           id="timeSwitch"
           label="Vybrat čas pro cvik?"
-          onChange={() => {
-            showTimer ? setShowTimer(false) : setShowTimer(true);
-          }}
+          onChange={() => setShowTimer((prev) => !prev)}
         />
         <Button variant="success" type="submit" className="mt-4 ">
-          Uložit trénink
+          Uložit změny
         </Button>
       </Form>
     </div>
   );
 }
 
-export default WorkoutForm;
+export default WorkoutUpdateForm;

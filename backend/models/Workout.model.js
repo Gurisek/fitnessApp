@@ -31,7 +31,7 @@ const WorkoutSchema = new mongoose.Schema(
           required: false,
         },
         duration: {
-          type: Number,
+          type: String,
           required: false,
         },
       },

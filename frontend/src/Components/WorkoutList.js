@@ -8,10 +8,22 @@ import {
 } from "react-bootstrap-icons";
 import { useState } from "react";
 import WorkoutDetail from "./Workout.detail";
+import { useNavigate } from "react-router-dom";
 
 export default function WorkoutList({ workouts }) {
   const [show, setShow] = useState(false);
   const [selectedWorkout, setSelectedWorkout] = useState(null);
+  const navigate = useNavigate();
+
+  const handleDelete =  (id) => {
+    fetch("http://localhost:5001/workout/" + id, {
+      method: "DELETE"
+    }).then(() => {
+      alert("Trénink byl úspěšně smazán");
+      window.location.reload();
+    });
+
+  }
 
   return (
     <>
@@ -63,10 +75,10 @@ export default function WorkoutList({ workouts }) {
                       Detail
                     </Button>
                     <div>
-                      <Button variant="danger" className="m-2 p-2">
+                      <Button onClick={() => handleDelete(workout._id)} variant="danger" className="m-2 p-2">
                         <Trash />
                       </Button>
-                      <Button variant="warning" className="p-2">
+                      <Button onClick={() => navigate(`/workout/edit/${workout._id}`)} variant="warning" className="p-2">
                         <PencilSquare />
                       </Button>
                     </div>

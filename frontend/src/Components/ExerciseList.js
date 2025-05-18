@@ -3,6 +3,17 @@ import Button from "react-bootstrap/Button";
 import { Trash, PencilSquare } from "react-bootstrap-icons";
 
 export default function ExerciseList({ exercises }) {
+
+  const handleDelete =  (id) => {
+    fetch("http://localhost:5001/exercise/" + id, {
+      method: "DELETE"
+    }).then(() => {
+      alert("Cvik byl úspěšně smazán");
+      window.location.reload();
+    });
+
+  }
+
   return (
     <div className="container mt-5">
       <h1 className="text-center mb-5">Seznam cviků </h1>
@@ -24,6 +35,7 @@ export default function ExerciseList({ exercises }) {
                 <Button
                   variant="danger"
                   className="d-flex d-flex align-items-center p-2 m-3"
+                  onClick={() => handleDelete(exercise._id)}
                 >
                   <Trash />
                   Odstranit
